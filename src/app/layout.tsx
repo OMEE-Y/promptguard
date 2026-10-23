@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "PromptGuard AI - Secure Chatbot & Threat Dashboard",
-  description: "Next.js TypeScript Prompt Injection Firewall with Gemini AI and Real-time Security Dashboard",
+  description: "Next.js TypeScript Prompt Injection Firewall with Groq ai and Real-time Security Dashboard",
 };
 
 export default function RootLayout({
