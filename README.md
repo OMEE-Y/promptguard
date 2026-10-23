@@ -1,72 +1,81 @@
-# 🛡️ PromptGuard AI (Next.js + TypeScript)
+# PromptGuard
 
-A production-ready **Prompt Injection Secure Chatbot** with a real-time **Security Telemetry Dashboard** built with **Next.js 14 (App Router)**, **TypeScript**, **Tailwind CSS**, and the official **Google GenAI SDK** (`@google/genai`).
+A Next.js chat interface and security firewall that screens user prompts for injection attacks, system extraction attempts, and safety violations before querying an LLM.
 
----
+## Features
 
-## ✨ Features
+- Heuristic analysis to detect instruction overrides, delimiters, and jailbreaks.
+- Real-time threat classification (`SAFE`, `SUSPICIOUS`, `CRITICAL`).
+- Dual-view UI:
+  - Chat window with streaming model responses.
+  - Telemetry dashboard logging prompt scores, triggers, and actions.
+- Edge API streaming via Groq (`openai/gpt-oss-20b`).
 
-- **Pre-Inference Injection Firewall**:
-  - Detects **Instruction Override** (*"ignore previous instructions"*).
-  - Detects **System Prompt Extraction** (*"repeat/show system prompt"*).
-  - Detects **Jailbreaks & Roleplays** (*"DAN", "Do Anything Now", "developer mode"*).
-  - Detects **Control Token / Delimiter Injection** (`<|im_start|>`, `[SYSTEM]`, `Human:`).
-  - Detects **Obfuscation Patterns** (Base64, rot13, hex, eval).
-- **Dual Experience (Chat & Dashboard)**:
-  - **Chat Interface**: Interactive chat with inline prompt safety badges (`SAFE`, `SUSPICIOUS`, `CRITICAL`) and quick attack test vectors.
-  - **Security Dashboard**: Live analytics metrics, average vulnerability scoring, injection blocks, and an inspection audit log table.
-- **Secure Gemini AI Integration**:
-  - Safe prompts invoke `gemini-2.5-flash` with robust system instructions.
-  - Injections are quarantined at the API boundary before touching the LLM.
+## Tech Stack
 
----
+- Next.js (App Router, TypeScript)
+- Tailwind CSS
+- Groq SDK
 
-## 🚀 Quick Start (Local Setup)
+## Getting Started
 
-1. **Extract and Navigate to Directory**:
-   ```bash
-   unzip promptguard-nextjs.zip
-   cd promptguard-nextjs
-   ```
+### 1. Prerequisites
 
-2. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
+Node.js 18+ installed on your machine.
 
-3. **Configure Environment Variables**:
-   Copy `.env.example` to `.env.local`:
-   ```bash
-   cp .env.example .env.local
-   ```
-   Add your Gemini API key from [Google AI Studio](https://aistudio.google.com/):
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key_here
-   ```
+### 2. Installation
 
-4. **Run the Development Server**:
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
+Clone the repository and install dependencies:
 
----
-
-## 📦 Push to GitHub & Deploy to Vercel
-
-### Step 1: Push to GitHub
 ```bash
-git init
-git add .
-git commit -m "Initial commit: PromptGuard AI Next.js App"
-git branch -M main
-git remote add origin https://github.com/<your-username>/promptguard-ai.git
-git push -u origin main
+git clone [https://github.com/OMEE-Y/promptguard.git](https://github.com/OMEE-Y/promptguard.git)
+cd promptguard
+npm install
 ```
 
-### Step 2: Deploy to Vercel
-1. Go to [vercel.com/new](https://vercel.com/new).
-2. Import your GitHub repository `promptguard-ai`.
-3. In **Environment Variables**, add:
-   - `GEMINI_API_KEY`: *(your Google Gemini API Key)*
-4. Click **Deploy**. Your prompt injection firewall is live!
+### 3. Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+GROQ_API_KEY=gsk_your_groq_api_key_here
+```
+
+### 4. Run Development Server
+
+```bash
+npm run dev
+```
+
+Open `http://localhost:3000` in your browser.
+
+## Project Structure
+
+```
+├── src/
+│   ├── app/
+│   │   ├── api/chat/route.ts   # Guardrail evaluation & Groq streaming endpoint
+│   │   ├── globals.css         # Base styles
+│   │   ├── layout.tsx          # Root layout
+│   │   └── page.tsx            # Chat UI & Telemetry dashboard
+│   ├── lib/
+│   │   └── guardrail.ts        # Detection rules, normalization, scoring logic
+│   └── types/
+│       └── index.ts            # TypeScript interfaces
+├── package.json
+└── tsconfig.json
+```
+
+## Security Pipeline
+
+1. Pre-processing: Strips invisible unicode characters and standardizes input.
+2. Rule Matching: Evaluates the prompt against instruction overrides, delimiter injections, and policy-violating vectors.
+3. Scoring and Thresholds:
+   - `< 25`: Safe (processed and sent to model)
+   - `25 - 59`: Suspicious (flagged, permitted with monitoring)
+   - `>= 60`: Critical (quarantined and blocked prior to inference)
+4. Execution: Safe requests stream completion tokens from Groq. Unsafe requests return an error payload directly to the client.
+
+## License
+
+MIT
