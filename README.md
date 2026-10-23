@@ -28,7 +28,7 @@ Node.js 18+ installed on your machine.
 Clone the repository and install dependencies:
 
 ```bash
-git clone [https://github.com/OMEE-Y/promptguard.git](https://github.com/OMEE-Y/promptguard.git)
+git clone https://github.com/OMEE-Y/promptguard.git
 cd promptguard
 npm install
 ```
@@ -76,6 +76,3 @@ Open `http://localhost:3000` in your browser.
    - `>= 60`: Critical (quarantined and blocked prior to inference)
 4. Execution: Safe requests stream completion tokens from Groq. Unsafe requests return an error payload directly to the client.
 
-## License
-
-MIT
